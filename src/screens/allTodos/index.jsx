@@ -1,12 +1,24 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Alert, Button, Col, Row, Spinner, Table } from "react-bootstrap";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../../router/routes";
 
 export const AllTodos = (props) => {
 
+    const navigate = useNavigate();
+
     const [data, setData] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(false);
+
+    const onAddNewTodoBtnClicked = () => {
+        navigate(AppRoutes.addTodo);
+    };
 
     React.useEffect(() => {
+        setIsLoading(true);
+        setError(false);
         axios.get('https://664188143d66a67b343417df.mockapi.io/todos')
             .then((response) => {
                 // handle success
@@ -14,17 +26,36 @@ export const AllTodos = (props) => {
             })
             .catch((error) => {
                 // handle error
+                setError(true);
                 console.log(error);
             })
             .finally(() => {
                 // always executed
+                setIsLoading(false);
             });
     }, []);
 
     return <div>
-        <h1>All Todos</h1>
 
-        <Table striped bordered hover>
+        <Row>
+            <Col>
+                <h1>All Todos</h1>
+            </Col>
+
+            <Col>
+                <Button onClick={onAddNewTodoBtnClicked}>Add New Todo</Button>
+            </Col>
+        </Row>
+
+        {isLoading && <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </Spinner>}
+
+        {error && <Alert variant={'danger'}>
+            Something went wrong, Unable to fetch todos.
+        </Alert>}
+
+        {!isLoading && !error && <Table striped bordered hover>
             <thead>
                 <tr>
                     <th>#</th>
@@ -40,13 +71,13 @@ export const AllTodos = (props) => {
                     return <tr key={todo.id}>
                         <td>{todo.id}</td>
                         <td>{todo.title}</td>
-                        <td>{new Date(todo.date).toString()}</td>
+                        <td>{todo.date}</td>
                         <td>{todo.is_completed ? "Yes" : "No"}</td>
-                        <td>{new Date(todo.created_at).toString()}</td>
-                        <td>{new Date(todo.updated_at).toString()}</td>
+                        <td>{todo.created_at}</td>
+                        <td>{todo.updated_at}</td>
                     </tr>
                 })}
             </tbody>
-        </Table>
+        </Table>}
     </div>
 }

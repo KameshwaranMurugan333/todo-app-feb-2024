@@ -1,4 +1,5 @@
 export const AppRoutes = {
     allTodos: "/allTodos",
-    addTodo: "/addTodo"
+    addTodo: "/addTodo",
+    editTodo: "/editTodo/:id"
 }

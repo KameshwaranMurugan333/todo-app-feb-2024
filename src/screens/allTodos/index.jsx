@@ -16,7 +16,28 @@ export const AllTodos = (props) => {
         navigate(AppRoutes.addTodo);
     };
 
-    React.useEffect(() => {
+    const onEditBtnClicked = (id) => {
+        navigate('/editTodo/' + id);
+    };
+
+    const onDeleteBtnClicked = (id) => {
+        if (window.confirm('Are you sure do you want to delete?')) {
+            setIsLoading(true);
+            axios.delete('https://664188143d66a67b343417df.mockapi.io/todos/' + id)
+                .then(res => {
+                    alert('Deleted Successfully!');
+                    fetchAllTodos();
+                })
+                .catch(err => {
+                    alert('Something went wrong, Unable to delete.')
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                })
+        }
+    };
+
+    const fetchAllTodos = () => {
         setIsLoading(true);
         setError(false);
         axios.get('https://664188143d66a67b343417df.mockapi.io/todos')
@@ -33,6 +54,10 @@ export const AllTodos = (props) => {
                 // always executed
                 setIsLoading(false);
             });
+    }
+
+    React.useEffect(() => {
+        fetchAllTodos();
     }, []);
 
     return <div>
@@ -64,6 +89,7 @@ export const AllTodos = (props) => {
                     <th>Is Completed?</th>
                     <th>Created At</th>
                     <th>Updated At</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,6 +101,10 @@ export const AllTodos = (props) => {
                         <td>{todo.is_completed ? "Yes" : "No"}</td>
                         <td>{todo.created_at}</td>
                         <td>{todo.updated_at}</td>
+                        <td>
+                            <Button onClick={() => onEditBtnClicked(todo.id)}>Edit</Button>
+                            <Button onClick={() => onDeleteBtnClicked(todo.id)} style={{ marginLeft: 8 }} variant="danger">Delete</Button>
+                        </td>
                     </tr>
                 })}
             </tbody>

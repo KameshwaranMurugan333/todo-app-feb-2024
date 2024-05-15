@@ -1,5 +1,5 @@
 import React from "react";
-import { AddTodo, AllTodos } from "./screens";
+import { AddTodo, AllTodos, EditTodo } from "./screens";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { AppRoutes } from "./router/routes";
 
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: AppRoutes.addTodo,
     element: <AddTodo />
+  },
+  {
+    path: AppRoutes.editTodo,
+    element: <EditTodo />
   }
 ])
 
